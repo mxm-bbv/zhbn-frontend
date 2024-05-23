@@ -1,0 +1,7 @@
+node_modules
+dist
+build
+src/css/*.css
+package-lock.json
+*.lock
+*.DS_Store
