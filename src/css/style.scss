@@ -1,8 +1,10 @@
 @use "sass:math";
 
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap);
+
 @import "base/mixins";
 
-$fontFamily:  "Inter";
+$fontFamily:  Inter;
 $fontStyle:   "normal";
 $fontFormat:  "woff", "woff2";
 $fontSize: 	  rem(16);
@@ -16,21 +18,10 @@ $maxWidthContainer: 1118;
 $containerPadding: 80;
 
 @import "base/null";
+@import "base/icons";
 
-body {
-	font-family: $fontFamily;
-	// Скролл заблокирован
-	.lock & {
-		overflow: hidden;
-		touch-action: none;
-	}
-	// Сайт загружен
-	.loaded & {
-		overflow: visible;
-		touch-action: auto;
-	}
-}
 .wrapper {
+	font-family: "Inter", sans-serif;
     background-color: transparent;
     width: 100%;
     height: 100%;
