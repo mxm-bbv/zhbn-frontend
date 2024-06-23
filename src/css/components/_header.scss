@@ -2,14 +2,14 @@
     @apply py-[10px];
 
     &__content {
-        @apply flex justify-between items-center;
+        @apply flex flex-col gap-5 sm:flex-row md:flex-row lg:flex-row xl:flex-row justify-between items-center;
 
         &-logo {
-            @apply flex items-center gap-8 text-[#121212] font-bold text-[32px];
+            @apply flex items-center w-max gap-8 text-[#121212] font-bold text-[32px];
         }
 
         &-buttons {
-            @apply flex items-center gap-[50px];
+            @apply flex items-center w-max gap-[50px];
             a {
                 @apply font-medium text-base text-[#121212] flex gap-5 items-center;
                 .icon {
@@ -17,6 +17,30 @@
                     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDI0IDI0Ij48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiPjxwYXRoIGQ9Ik0yLjAzNiAxMi4zMjJjLS4wNjkwMS0uMjA3NC0uMDY5MDEtLjQzMTYgMC0uNjM5QzMuNDIzIDcuNTEgNy4zNiA0LjUgMTIgNC41YzQuNjM4IDAgOC41NzMgMy4wMDcgOS45NjMgNy4xNzguMDcuMjA3LjA3LjQzMSAwIC42MzlDMjAuNTc3IDE2LjQ5IDE2LjY0IDE5LjUgMTIgMTkuNWMtNC42MzggMC04LjU3NC0zLjAwNy05Ljk2NC03LjE3OFoiLz48cGF0aCBkPSJNMTUgMTJjMCAuNzk1Ni0uMzE2MSAxLjU1ODctLjg3ODcgMi4xMjEzQzEzLjU1ODcgMTQuNjgzOSAxMi43OTU2IDE1IDEyIDE1Yy0uNzk1NiAwLTEuNTU4Ny0uMzE2MS0yLjEyMTMyLS44Nzg3QzkuMzE2MDcgMTMuNTU4NyA5IDEyLjc5NTYgOSAxMmMwLS43OTU2LjMxNjA3LTEuNTU4Ny44Nzg2OC0yLjEyMTMyQzEwLjQ0MTMgOS4zMTYwNyAxMS4yMDQ0IDkgMTIgOWMuNzk1NiAwIDEuNTU4Ny4zMTYwNyAyLjEyMTMuODc4NjhDMTQuNjgzOSAxMC40NDEzIDE1IDExLjIwNDQgMTUgMTJaIi8+PC9nPjwvc3ZnPg==");
                 }
             }
+        }
+    }
+}
+#green {
+    .header {
+        @apply bg-[#F1F9F3];
+    }
+    .header-second {
+        @apply bg-[#F1F9F3];
+
+        &__content {
+            @apply py-[50px] flex flex-col gap-[30px];
+        }
+
+        &__title {    
+            @apply font-bold text-4xl sm:text-[52px] md:text-[52px] lg:text-[52px] xl:text-[52px] text-[#121212];
+        }
+
+        &__description {
+            @apply font-medium text-xl text-[#121212];
+        }
+
+        &__button {
+            @apply bg-[#026B4D] rounded-xl px-[50px] py-[15px] w-max text-white text-xl font-medium;
         }
     }
 }

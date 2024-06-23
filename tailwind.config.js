@@ -16,7 +16,12 @@ const plugins = Object.keys(allPlugins)
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{html,js,php}"],
+  mode: 'jit',
+  content: [
+    "./src/*.html",
+    "./src/components/**/*.htm",
+    "./src/**/*.scss"
+  ],
   darkMode: "class",
   theme: {
     extend: {},

@@ -1,0 +1,24 @@
+<script type="module">
+    import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
+
+    window._sliders = {};
+
+    function swiper(identifier, opts = {}) {
+        opts = Object.assign(opts, {
+            direction: 'horizontal',
+            slidesPerView: 1,
+            slidesPerGroup: 1,
+            autoHeight: true,
+
+            // If we need pagination
+            pagination: {
+                el: '.news-list__swiper-pagination',
+                hide: true,
+            }
+        });
+
+        window._sliders[identifier] = new Swiper(identifier, opts);
+    }
+
+    swiper('.news-list__swiper', {});
+</script>

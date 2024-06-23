@@ -1,8 +1,6 @@
 @use "sass:math";
 
-@import url(https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap);
-
-@import "base/mixins";
+@import "./base/mixins";
 
 $fontFamily:  Inter;
 $fontStyle:   "normal";
@@ -13,26 +11,32 @@ $fontColor: #121212;
 $minWidth: 320;
 $maxWidth: 1920;
 $maxWidthContainer: 1118;
-// Общий отступ у контейнера
-// (30 = по 15px слева и справа, 0 = нет отступа)
 $containerPadding: 80;
 
-@import "base/null";
-@import "base/icons";
+@import "./base/null";
+@import "./base/icons";
+
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
 
 .wrapper {
-	font-family: "Inter", sans-serif;
+    font-family: "Inter", sans-serif;
     background-color: transparent;
     width: 100%;
     height: 100%;
-	overflow: hidden;
-	// Прижимаем footer
-	> main {
-		flex: 1 1 auto;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
+    display: flex;
+    flex-direction: column;
+    
+    /* Прижимаем footer */
+    > main {
+        flex: 1 1 auto;
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+    }
 }
 
 [class*="__container"] {
@@ -48,6 +52,6 @@ $containerPadding: 80;
 
 @import "./tailwind";
 
-@import "components";
+@import "./components";
 
-@import "home";
+@import "./home";

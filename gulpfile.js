@@ -1,20 +1,30 @@
-const { src, dest, watch, series, parallel } = require("gulp");
-const clean = require("gulp-clean"); //For Cleaning build/dist for fresh export
-const options = require("./config"); //paths and other options from config.js
+const {
+  src,
+  dest,
+  watch,
+  series,
+  parallel
+} = require("gulp");
+const clean = require("gulp-clean"); // For Cleaning build/dist for fresh export
+const options = require("./config"); // paths and other options from config.js
 const browserSync = require("browser-sync").create();
 
-const sass = require("gulp-sass")(require("sass")); //For Compiling SASS files
-const postcss = require("gulp-postcss"); //For Compiling tailwind utilities with tailwind config
-const concat = require("gulp-concat"); //For Concatinating js,css files
-const uglify = require("gulp-terser"); //To Minify JS files
-const imagemin = require("gulp-imagemin"); //To Optimize Images
+const sass = require("gulp-sass")(require("sass")); // For Compiling SASS files
+const postcss = require("gulp-postcss"); // For Compiling tailwind utilities with tailwind config
+const concat = require("gulp-concat"); // For Concatinating js, css files
+const uglify = require("gulp-terser"); // To Minify JS files
+const imagemin = require("gulp-imagemin"); // To Optimize Images
 const mozjpeg = require("imagemin-mozjpeg"); // imagemin plugin
 const pngquant = require("imagemin-pngquant"); // imagemin plugin
 const purgecss = require("gulp-purgecss"); // Remove Unused CSS from Styles
-const logSymbols = require("log-symbols"); //For Symbolic Console logs :) :P
-const includePartials = require("gulp-file-include"); //For supporting partials if required
+const logSymbols = require("log-symbols"); // For Symbolic Console logs :) :P
+const includePartials = require("gulp-file-include"); // For supporting partials if required
+const nested = require('postcss-nested');
 
-//Load Previews on Browser on dev
+const tailwindcss = require("tailwindcss");
+const autoprefixer = require("autoprefixer");
+
+// Load Previews on Browser on dev
 function livePreview(done) {
   browserSync.init({
     server: {
@@ -32,7 +42,7 @@ function previewReload(done) {
   done();
 }
 
-//Development Tasks
+// Development Tasks
 function devHTML() {
   return src(`${options.paths.src.base}/**/*.{html,htm}`)
     .pipe(includePartials())
@@ -40,29 +50,33 @@ function devHTML() {
 }
 
 function devStyles() {
-  const tailwindcss = require("tailwindcss");
-  const autoprefixer = require("autoprefixer");
+  console.log(`Source path: ${options.paths.src.css}`);
+  console.log(`Destination path: ${options.paths.dist.css}`);
+
   return src(`${options.paths.src.css}/**/*.scss`)
     .pipe(sass().on("error", sass.logError))
-    .pipe(postcss([tailwindcss(options.config.tailwindjs), autoprefixer()]))
-    .pipe(concat({ path: "style.css" }))
-    .pipe(dest(options.paths.dist.css));
+    .pipe(postcss([
+      nested(),
+      tailwindcss(options.config.tailwindjs),
+      autoprefixer(),
+    ]))
+    .pipe(concat('style.css'))
+    .pipe(dest(options.paths.dist.css, {
+      sourcemaps: true
+    }))
+    .on('end', () => console.log('Styles compiled successfully.'));
 }
 
 function devScripts() {
   return src([
-    `${options.paths.src.js}/libs/**/*.js`,
-    `${options.paths.src.js}/**/*.js`,
-    `!${options.paths.src.js}/**/external/*`,
-  ])
-    .pipe(concat({ path: "scripts.js" }))
+      `${options.paths.src.js}/libs/**/*.js`,
+      `${options.paths.src.js}/**/*.js`,
+      `!${options.paths.src.js}/**/external/*`,
+    ])
+    .pipe(concat({
+      path: "scripts.js"
+    }))
     .pipe(dest(options.paths.dist.js));
-}
-
-function devImages() {
-  return src(`${options.paths.src.img}/**/*`).pipe(
-    dest(options.paths.dist.img)
-  );
 }
 
 function devImages() {
@@ -107,12 +121,15 @@ function devClean() {
     "\n\t" + logSymbols.info,
     "Cleaning dist folder for fresh start.\n"
   );
-  return src(options.paths.dist.base, { read: false, allowEmpty: true }).pipe(
+  return src(options.paths.dist.base, {
+    read: false,
+    allowEmpty: true
+  }).pipe(
     clean()
   );
 }
 
-//Production Tasks (Optimized Build for Live/Production Sites)
+// Production Tasks (Optimized Build for Live/Production Sites)
 function prodHTML() {
   return src(`${options.paths.src.base}/**/*.{html,php}`)
     .pipe(includePartials())
@@ -120,56 +137,63 @@ function prodHTML() {
 }
 
 function prodStyles() {
-  const tailwindcss = require("tailwindcss");
-  const autoprefixer = require("autoprefixer");
   const cssnano = require("cssnano");
+
   return src(`${options.paths.src.css}/**/*.scss`)
+    .pipe(postcss([
+      nested(),
+      tailwindcss(options.config.tailwindjs),
+      autoprefixer(),
+      cssnano()
+    ]))
     .pipe(sass().on("error", sass.logError))
-    .pipe(
-      postcss([
-        tailwindcss(options.config.tailwindjs),
-        autoprefixer(),
-        cssnano(),
-      ])
-    )
-    // .pipe(
-    //   purgecss({
-    //     ...options.config.purgecss,
-    //     defaultExtractor: (content) => {
-    //       // without arbitray selectors
-    //       // const v2Regex = /[\w-:./]+(?<!:)/g;
-    //       // with arbitray selectors
-    //       const v3Regex = /[(\([&*\])|\w)-:./]+(?<!:)/g;
-    //       const broadMatches = content.match(v3Regex) || [];
-    //       const innerMatches =
-    //         content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || [];
-    //       return broadMatches.concat(innerMatches);
-    //     },
-    //   })
-    // )
-    .pipe(dest(options.paths.build.css));
+    .pipe(concat('style.css'))
+    .pipe(dest(options.paths.build.css, {
+      sourcemaps: true
+    }))
+    .on('end', () => console.log('Styles compiled successfully.'));
+  // .pipe(
+  //   purgecss({
+  //     ...options.config.purgecss,
+  //     defaultExtractor: (content) => {
+  //       // without arbitray selectors
+  //       // const v2Regex = /[\w-:./]+(?<!:)/g;
+  //       // with arbitray selectors
+  //       const v3Regex = /[(\([&*\])|\w)-:./]+(?<!:)/g;
+  //       const broadMatches = content.match(v3Regex) || [];
+  //       const innerMatches =
+  //         content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || [];
+  //       return broadMatches.concat(innerMatches);
+  //     },
+  //   })
+  // )
 }
 
 function prodScripts() {
   return src([
-    `${options.paths.src.js}/libs/**/*.js`,
-    `${options.paths.src.js}/**/*.js`,
-  ])
-    .pipe(concat({ path: "scripts.js" }))
+      `${options.paths.src.js}/libs/**/*.js`,
+      `${options.paths.src.js}/**/*.js`,
+    ])
+    .pipe(concat({
+      path: "scripts.js"
+    }))
     .pipe(uglify())
     .pipe(dest(options.paths.build.js));
 }
 
 function prodImages() {
-  const pngQuality = Array.isArray(options.config.imagemin.png)
-    ? options.config.imagemin.png
-    : [0.7, 0.7];
-  const jpgQuality = Number.isInteger(options.config.imagemin.jpeg)
-    ? options.config.imagemin.jpeg
-    : 70;
+  const pngQuality = Array.isArray(options.config.imagemin.png) ?
+    options.config.imagemin.png : [0.7, 0.7];
+  const jpgQuality = Number.isInteger(options.config.imagemin.jpeg) ?
+    options.config.imagemin.jpeg :
+    70;
   const plugins = [
-    pngquant({ quality: pngQuality }),
-    mozjpeg({ quality: jpgQuality }),
+    pngquant({
+      quality: pngQuality
+    }),
+    mozjpeg({
+      quality: jpgQuality
+    }),
   ];
 
   return src(options.paths.src.img + "/**/*")
@@ -194,7 +218,10 @@ function prodClean() {
     "\n\t" + logSymbols.info,
     "Cleaning build folder for fresh start.\n"
   );
-  return src(options.paths.build.base, { read: false, allowEmpty: true }).pipe(
+  return src(options.paths.build.base, {
+    read: false,
+    allowEmpty: true
+  }).pipe(
     clean()
   );
 }
@@ -209,7 +236,7 @@ function buildFinish(done) {
 
 exports.default = series(
   devClean, // Clean Dist Folder
-  parallel(devStyles, devScripts, devImages, devFonts, devThirdParty, devHTML), //Run All tasks in parallel
+  parallel(devStyles, devScripts, devImages, devFonts, devThirdParty, devHTML), // Run All tasks in parallel
   livePreview, // Live Preview Build
   watchFiles // Watch for Live Changes
 );
@@ -223,6 +250,6 @@ exports.prod = series(
     prodHTML,
     prodFonts,
     prodThirdParty
-  ), //Run All tasks in parallel
+  ), // Run All tasks in parallel
   buildFinish
 );

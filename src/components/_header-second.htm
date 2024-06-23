@@ -1,0 +1,21 @@
+<div class="header-second">
+    <div class="header-second__container">
+        <div class="header-second__content">
+            <div class="header-second__title">
+                <h1>
+                    @@title
+                </h1>
+            </div>
+            @@if (context.description) {
+                <div class="header-second__description">
+                    <p>@@description</p>
+                </div>
+            }
+            @@if (context.button) {
+                <a class="header-second__button" href="#">
+                    Написать в техподдержку
+                </a>
+            }
+        </div>
+    </div>
+</div>
